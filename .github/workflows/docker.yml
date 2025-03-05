@@ -3,7 +3,7 @@ name: Build, Push, and Run Docker Container
 on:
   push:
     branches:
-      - main  # Modifier selon votre branche principale
+      - master  # Modifier selon votre branche principale
 
 jobs:
   build-push-and-run:
