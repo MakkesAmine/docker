@@ -34,5 +34,16 @@ jobs:
       - name: Run Docker container
         run: docker run -d -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/mlflow-docker:latest
 
-      - name: Verify MLflow is running
-        run: curl --fail http://localhost:5000/ || exit 1
+      - name: Wait for MLflow to be ready
+        run: |
+          echo "Waiting for MLflow to be ready..."
+          for i in {1..30}; do
+            if curl --fail http://localhost:5000/; then
+              echo "MLflow is ready!"
+              exit 0
+            fi
+            echo "MLflow is not ready yet. Waiting..."
+            sleep 5
+          done
+          echo "MLflow did not become ready in time."
+          exit 1
