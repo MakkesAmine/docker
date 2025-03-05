@@ -70,4 +70,9 @@ jobs:
           
       - name: Verify MLflow is running
         run: |
+          echo "Checking if MLflow is accessible..."
+          if [ -z "${{ env.NGROK_URL }}" ]; then
+            echo "NGROK_URL environment variable is empty!"
+            exit 1
+          fi
           curl --fail ${{ env.NGROK_URL }} || exit 1
