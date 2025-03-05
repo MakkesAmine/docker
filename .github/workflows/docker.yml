@@ -64,15 +64,15 @@ jobs:
         run: |
           echo "Waiting for ngrok to be ready..."
           sleep 10
-          NGROK_URL=$(curl -s localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          if [ -z "$NGROK_URL" ]; then
+            echo "Failed to get ngrok URL"
+            exit 1
+          fi
           echo "ngrok URL: $NGROK_URL"
           echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
           
       - name: Verify MLflow is running
         run: |
           echo "Checking if MLflow is accessible..."
-          if [ -z "${{ env.NGROK_URL }}" ]; then
-            echo "NGROK_URL environment variable is empty!"
-            exit 1
-          fi
-          curl --fail ${{ env.NGROK_URL }} || exit 1
+          curl --fail "${{ env.NGROK_URL }}" || exit 1
