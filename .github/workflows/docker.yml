@@ -43,6 +43,20 @@ jobs:
           echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
           sudo apt-get update && sudo apt-get install ngrok
 
+      - name: Wait for MLflow to be ready
+        run: |
+          echo "Waiting for MLflow to be ready..."
+          for i in {1..30}; do
+            if curl --fail http://localhost:5000/; then
+              echo "MLflow is ready!"
+              exit 0
+            fi
+            echo "MLflow is not ready yet. Waiting..."
+            sleep 5
+          done
+          echo "MLflow did not become ready in time."
+          exit 1
+
       - name: Start ngrok
         run: ngrok http 5000 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
       
