@@ -58,11 +58,8 @@ jobs:
           exit 1
 
       - name: Start ngrok
-        run: ngrok http 5000 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
-      
-      - name: Wait for ngrok to be ready and get public URL
         run: |
-          echo "Waiting for ngrok to be ready..."
+          ngrok http 5000 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
           sleep 10
           NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
           if [ -z "$NGROK_URL" ]; then
